@@ -1,0 +1,411 @@
+$ghost-width: 80px;
+$ghost-height: 115px;
+$dark-color: #090501;
+$base-color: #191b52;
+$cream: #ffe7c3;
+$spider: #e3310e;
+$pumpkin: #db620c;
+$body-color: radial-gradient(ellipse at bottom, #1b2735 0%, #090a0f 100%);
+
+@function random_range($min, $max) {
+  $rand: random();
+  $random_range: $min + floor($rand * (($max - $min) + 1));
+  @return $random_range;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: $dark-color;
+  transition: background 0.3s ease;
+  overflow: hidden;
+
+  .moon {
+    top: 70px;
+    left: 47px;
+    width: 140px;
+    height: 140px;
+    background: $cream;
+    box-shadow: 0 0 10px 2px #fff, 0 0 30px 3px #ffffdf, 0 0 50px 7px #ffffb5;
+  }
+}
+
+.container {
+  position: relative;
+  width: 350px;
+  height: 350px;
+}
+
+.base {
+  position: absolute;
+  left: 50%;
+  width: 298px;
+  height: 85px;
+  transform: translate(-50%, -68px) perspective(10px) rotatex(2deg);
+  border: 5px solid $base-color;
+  border-radius: 0 0 30px 30px;
+  background: $dark-color;
+  transition: all 0.3s ease;
+}
+
+.globe {
+  position: relative;
+  overflow: hidden;
+  width: 350px;
+  height: 350px;
+  border: 5px solid $base-color;
+  border-radius: 50%;
+  background: $base-color;
+  box-shadow: inset 0 0 0 10px $dark-color;
+  transition: all 0.3s ease;
+}
+
+.snow {
+  $total: 200;
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: white;
+  border-radius: 50%;
+
+  @for $i from 1 through $total {
+    $random-x: random(1000000) * 0.0001vw;
+    $random-offset: random_range(-100000, 100000) * 0.0001vw;
+    $random-x-end: $random-x + $random-offset;
+    $random-x-end-yoyo: $random-x + ($random-offset / 2);
+    $random-yoyo-time: random_range(30000, 80000) / 100000;
+    $random-yoyo-y: $random-yoyo-time * 100vh;
+    $random-scale: random(10000) * 0.0001;
+    $fall-duration: random_range(10, 30) * 1s;
+    $fall-delay: random(30) * -1s;
+
+    &:nth-child(#{$i}) {
+      opacity: random(10000) * 0.0001;
+      transform: translate($random-x, -10px) scale($random-scale);
+      animation: fall-#{$i} $fall-duration $fall-delay linear infinite;
+    }
+
+    @keyframes fall-#{$i} {
+      #{percentage($random-yoyo-time)} {
+        transform: translate($random-x-end, $random-yoyo-y) scale($random-scale);
+      }
+
+      to {
+        transform: translate($random-x-end-yoyo, 100vh) scale($random-scale);
+      }
+    }
+  }
+}
+
+.moon {
+  position: absolute;
+  top: 80px;
+  left: 68px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.ghost {
+  position: absolute;
+  top: 160px;
+  left: 120px;
+
+  .ghost-head {
+    position: relative;
+    width: $ghost-width;
+    height: 0;
+    padding-top: 100%;
+    border-radius: 100%;
+    background-color: $dark-color;
+
+    .ghost-eye {
+      width: 15px;
+      height: 15px;
+      background-color: $cream;
+      z-index: 3;
+      bottom: 40px;
+      border-radius: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      position: absolute;
+      z-index: 2;
+      animation: eyeblink 1s linear infinite;
+    }
+    .eye-left {
+      left: 25px;
+      position: absolute;
+    }
+
+    .eye-right {
+      left: 57px;
+      position: absolute;
+    }
+
+    @keyframes eyeblink {
+      0% {
+        height: 15px;
+      }
+      50% {
+        height: 10px;
+      }
+      100% {
+        height: 15px;
+      }
+    }
+  }
+
+  .ghost-body {
+    position: absolute;
+    top: $ghost-width/2;
+    height: 0;
+    width: $ghost-width;
+    padding-top: 85%;
+    background-color: $dark-color;
+
+    .ghost-smile {
+      left: 50%;
+      transform: translateX(-50%);
+      top: 10px;
+      width: 30px;
+      height: 8px;
+      position: absolute;
+      border: 1.5px solid $cream;
+      background: $cream;
+      border-radius: 0 0 100px 100px;
+      animation: ghostsmile 1s linear infinite;
+    }
+
+    // @keyframes ghostsmile {
+    //   100% {
+    //     height: 5px;
+    //   }
+    //   50% {
+    //     height: 9px;
+    //   }
+    //   0% {
+    //     height: 5px;
+    //   }
+    // }
+  }
+
+  .ghost-hand {
+    height: 36px;
+    width: 22px;
+    background: $dark-color;
+    border-radius: 100%/90%;
+    position: absolute;
+    &.hand-left {
+      left: -12px;
+      top: 10px;
+      transform: rotateZ(-45deg);
+    }
+    &.hand-right {
+      right: -12px;
+      top: 10px;
+      transform: rotateZ(45deg);
+    }
+  }
+
+  .ghost-skirt {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    transform: translateY(50%);
+    .pleat {
+      width: 20%;
+      height: 8px;
+      border-radius: 100%;
+      &.down {
+        background-color: $dark-color;
+      }
+      &.up {
+        background-color: $base-color;
+        position: relative;
+        top: 1px;
+      }
+    }
+  }
+}
+
+.pumpkin {
+  position: absolute;
+  border-radius: 50%;
+  background-color: $pumpkin;
+}
+
+.pumpkin1 {
+  left: 240px;
+  top: 265px;
+  height: 20px;
+  width: 40px;
+}
+
+.pumpkin2 {
+  left: 40px;
+  top: 240px;
+  height: 50px;
+  width: 30px;
+}
+
+.stem {
+  position: absolute;
+  background-color: $pumpkin;
+  border-bottom-left-radius: 3px;
+  border-bottom-right-radius: 3px;
+  border-top-left-radius: 23px;
+  border-top-right-radius: 10px;
+  transform: translate(-50%);
+}
+
+.stem1 {
+  left: 20px;
+  top: -2px;
+  height: 10%;
+  width: 10%;
+}
+
+.stem2 {
+  left: 20px;
+  top: -2px;
+  height: 80px;
+  width: 10%;
+}
+
+.spider-group {
+  position: absolute;
+  width: 40px;
+  height: 80px;
+  right: 100px;
+  top: 20px;
+  transform: scale(0.9);
+
+  .thread {
+    position: absolute;
+    width: 1px;
+    height: 90px;
+    top: -3px;
+    right: 0;
+    background-color: $cream;
+  }
+
+  .spider {
+    position: absolute;
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    top: 85px;
+    right: -11px;
+    background-color: $dark-color;
+    animation: spider 5s ease infinite;
+    background: $spider;
+
+    .spider-leg {
+      position: absolute;
+      width: 7px;
+      height: 3px;
+      right: -5px;
+      top: 8px;
+      background-color: $dark-color;
+      border-radius: 1px;
+      animation: spiderleg 3s linear infinite;
+    }
+    .spider-leg:nth-child(2) {
+      top: 1px;
+      right: -4px;
+      transform: rotate(-25deg);
+    }
+    .spider-leg:nth-child(3) {
+      top: 15px;
+      right: -4px;
+      transform: rotate(25deg);
+    }
+    .spider-leg:nth-child(4) {
+      background-color: $dark-color;
+      transform: scaleX(-1);
+      right: 21px;
+    }
+    .spider-leg:nth-child(5) {
+      transform: scaleX(-1) rotate(-25deg);
+      top: 1px;
+      right: 18px;
+    }
+    .spider-leg:nth-child(6) {
+      transform: scaleX(-1) rotate(35deg);
+      top: 15px;
+      right: 20px;
+    }
+
+    @keyframes spiderleg {
+      0% {
+        width: 7px;
+        height: 3px;
+        transform: translateY(-1px);
+      }
+      50% {
+        width: 10px;
+        height: 3px;
+        transform: translateY(-1px);
+      }
+      100% {
+        width: 7px;
+        height: 3px;
+        transform: translateY(-1px);
+      }
+    }
+  }
+}
+
+.bat {
+  position: absolute;
+  top: 100px;
+  left: 70px;
+}
+
+.bat1 {
+  position: absolute;
+  top: 75px;
+  left: 95px;
+}
+
+.head {
+  position: absolute;
+  width: 5px;
+  height: 10px;
+  background-color: $dark-color;
+  border-radius: 40%;
+}
+
+.body {
+  position: absolute;
+  top: 5px;
+  width: 5px;
+  height: 10px;
+  background-color: $dark-color;
+  border-radius: 50% 50% 49% 51% / 35% 35% 65% 65%;
+  box-shadow: 0 0 40px $dark-color;
+}
+
+.wing {
+  position: absolute;
+  background-color: $dark-color;
+  box-shadow: inset 0px 10px 0 rgba($dark-color, 0.2);
+  border-radius: 100px 100px 0 0;
+  width: 20px;
+  height: 10px;
+  transform: rotate(-15deg);
+}
+.wing-right {
+  position: absolute;
+  transform: rotate(15deg);
+  left: -15px;
+}
